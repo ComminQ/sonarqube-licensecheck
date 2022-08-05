@@ -6,5 +6,7 @@ target/
 node_modules/
 node/
 .idea/
+lib/
 *.iml
 .vscode/
+*.sh

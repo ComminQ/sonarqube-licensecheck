@@ -44,8 +44,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonarqube.version>8.9.0.43852</sonarqube.version>
-    <java.version>1.8</java.version>
+    <sonarqube.version>9.5.0.71</sonarqube.version>
+    <sonararchive.version>9.5.0.56709</sonararchive.version>
+    <java.version>11</java.version>
   </properties>
 
   <dependencies>
@@ -79,17 +80,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
+      <groupId>org.sonarsource.api.plugin</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonarqube.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
+      <artifactId>sonar-packaging-maven-plugin</artifactId>
+      <version>1.21.0.505</version>
+    </dependency>
+    <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-application</artifactId>
-      <version>${sonarqube.version}</version>
+      <version>${sonararchive.version}</version>
       <scope>system</scope>
-      <systemPath>${project.build.directory}/sonarqube-${sonarqube.version}/lib/sonar-application-${sonarqube.version}.jar</systemPath>
+      <systemPath>${project.basedir}/lib/sonarqube-${sonararchive.version}/lib/sonar-application-${sonararchive.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
@@ -133,7 +139,7 @@
                 <artifactItem>
                   <groupId>org.sonarsource.sonarqube</groupId>
                   <artifactId>sonar-application</artifactId>
-                  <version>${sonarqube.version}</version>
+                  <version>${sonararchive.version}</version>
                   <type>zip</type>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                   <overWrite>false</overWrite>
@@ -228,8 +234,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v16.13.2</nodeVersion>
-          <npmVersion>8.1.2</npmVersion>
+          <nodeVersion>v18.7.0</nodeVersion>
+          <npmVersion>8.15.0</npmVersion>
         </configuration>
       </plugin>
     </plugins>

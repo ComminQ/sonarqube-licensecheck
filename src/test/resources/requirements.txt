@@ -1,0 +1,9 @@
+# Here all possible cases
+###### Requirements without Version Specifiers ######
+nose
+nose-cov
+beautifulsoup4
+###### Requirements with Version Specifiers ######
+docopt == 0.6.1
+psycopg2 >= 2.9.3
+Flask ~= 2.2.1
