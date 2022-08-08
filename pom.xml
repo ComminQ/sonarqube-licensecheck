@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonarqube.version>9.5.0.71</sonarqube.version>
+    <sonarqube.version>9.4.0.54424</sonarqube.version>
     <sonararchive.version>9.5.0.56709</sonararchive.version>
     <java.version>11</java.version>
   </properties>
@@ -80,7 +80,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.sonarsource.api.plugin</groupId>
+      <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonarqube.version}</version>
       <scope>provided</scope>
