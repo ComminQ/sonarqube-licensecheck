@@ -3,8 +3,8 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,6 +23,7 @@ import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.pip.RequirementsTxtDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
 {
@@ -42,7 +43,8 @@ public class LicenseCheckSensor implements Sensor
             new PackageJsonDependencyScanner(licenseMappingService,
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
             new MavenDependencyScanner(licenseMappingService),
-            new GradleDependencyScanner(licenseMappingService)};
+            new GradleDependencyScanner(licenseMappingService),
+            new RequirementsTxtDependencyScanner(licenseMappingService)};
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)

@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import at.porscheinformatik.sonarqube.licensecheck.pip.PipUtils;
-
 public class PipUtilsTest {
  
   @Test

@@ -46,13 +46,9 @@ public class RequirementsTxtDependencyScannerTest {
   }
 
   private Scanner createScanner() {
-    return createScanner(false);
-  }
-
-  private Scanner createScanner(boolean resolveTransitiveDeps) {
     LicenseMappingService licenseMappingService = mock(LicenseMappingService.class);
     when(licenseMappingService.mapLicense(anyString())).thenCallRealMethod();
-    return new RequirementsTxtDependencyScanner(licenseMappingService, resolveTransitiveDeps);
+    return new RequirementsTxtDependencyScanner(licenseMappingService);
   }
 
   @Test

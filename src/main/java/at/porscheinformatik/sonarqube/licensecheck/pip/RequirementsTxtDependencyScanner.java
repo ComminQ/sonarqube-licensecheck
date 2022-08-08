@@ -19,18 +19,16 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.utils.PipUtils;
 
 public class RequirementsTxtDependencyScanner implements Scanner {
 
   private static final Logger LOGGER = Loggers.get(RequirementsTxtDependencyScanner.class);
 
   private final LicenseMappingService licenseMappingService;
-  private final boolean resolveTransitiveDeps;
 
-  public RequirementsTxtDependencyScanner(LicenseMappingService licenseMappingService,
-      boolean resolveTransitiveDeps) {
+  public RequirementsTxtDependencyScanner(LicenseMappingService licenseMappingService) {
     this.licenseMappingService = licenseMappingService;
-    this.resolveTransitiveDeps = resolveTransitiveDeps;
   }
 
   private Set<Dependency> dependencyParser(File baseDir, InputFile requirementsTxtFile) {
@@ -63,6 +61,7 @@ public class RequirementsTxtDependencyScanner implements Scanner {
                 + " has no license, based on pypi API, be careful while using this package.");
             continue;
           }
+          license = licenseMappingService.mapLicense(license);
           var deps = new Dependency(
             packageData.getKey(), 
             packageData.getValue(), 

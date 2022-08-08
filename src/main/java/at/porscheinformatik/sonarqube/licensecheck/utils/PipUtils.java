@@ -1,7 +1,6 @@
-package at.porscheinformatik.sonarqube.licensecheck.pip;
+package at.porscheinformatik.sonarqube.licensecheck.utils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.json.Json;
