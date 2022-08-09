@@ -67,13 +67,15 @@ public class RequirementsTxtDependencyScannerTest {
     Set<Dependency> dependencies = createScanner()
       .scan(createContext(RESOURCE_FOLDER, "requirements.txt"));
 
-    assertThat(dependencies, hasSize(4));
+    assertThat(dependencies, hasSize(6));
     
     assertThat(dependencies, containsInAnyOrder(
       new Dependency("docopt", "0.6.1","MIT"),
       new Dependency("psycopg2", "2.9.3","LGPL with exceptions"),
       new Dependency("Flask", "2.2.1","BSD-3-Clause"),
-      new Dependency("flask_cors", "3.0.10", "MIT")));
+      new Dependency("flask_cors", "3.0.10", "MIT"),
+      new Dependency("zipp", "3.8.0", "MIT"),
+      new Dependency("speaklater", "1.3", "BSD")));
   }
 
   @Test
