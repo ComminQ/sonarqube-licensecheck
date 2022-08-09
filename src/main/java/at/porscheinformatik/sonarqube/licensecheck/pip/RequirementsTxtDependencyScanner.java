@@ -59,9 +59,9 @@ public class RequirementsTxtDependencyScanner implements Scanner {
           if (license == null) {
             LOGGER.warn("Python Package " + packageData.getKey()
                 + " has no license, based on pypi API, be careful while using this package.");
-            continue;
+          } else {
+            license = licenseMappingService.mapLicense(license);
           }
-          license = licenseMappingService.mapLicense(license);
           var deps = new Dependency(
               packageData.getKey(),
               packageData.getValue(),
@@ -87,13 +87,18 @@ public class RequirementsTxtDependencyScanner implements Scanner {
 
     Set<Dependency> allDependencies = new HashSet<>();
     LOGGER.info("Starting PIP scan for {}",
-      context.project().key());
+        context.project().key());
 
     for (InputFile requirementsTxtFile : fs.inputFiles(requirementsTxtPredicate)) {
       context.markForPublishing(requirementsTxtFile);
 
       LOGGER.info("Scanning for PIP dependencies (dir={})", fs.baseDir());
-      allDependencies.addAll(dependencyParser(fs.baseDir(), requirementsTxtFile));
+      var dependencies = dependencyParser(fs.baseDir(), requirementsTxtFile);
+      dependencies.forEach(dep -> {
+        dep.setInputComponent(requirementsTxtFile);
+        dep.setTextRange(requirementsTxtFile.newRange(1, 0, requirementsTxtFile.lines(), 0));
+      });
+      allDependencies.addAll(dependencies);
     }
 
     LOGGER.info("PIP scan finished for {}", context.project().key());

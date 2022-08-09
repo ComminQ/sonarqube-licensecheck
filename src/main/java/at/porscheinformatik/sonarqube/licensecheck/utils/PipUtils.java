@@ -2,14 +2,12 @@ package at.porscheinformatik.sonarqube.licensecheck.utils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.elasticsearch.core.List;
 
 /**
  * Utility class for handling PIP requirements description
@@ -29,13 +27,13 @@ public class PipUtils {
   public static Pair<String, String> getPackage(String line) throws ArrayIndexOutOfBoundsException {
     // Replace all spaces with nothing
     String[] datas = line.replaceAll("\\s+", "")
-        // Split by non alphanumeric char excluding '-'
-        .split("[^a-zA-Z0-9\\-']+");
+        // Split by non alphanumeric char excluding '-' and '_'
+        .split("[^a-zA-Z0-9\\-\\_']+");
 
     String name = datas[0];
     String version = String
         .join(".", List.of(datas).subList(1, datas.length));
-    return new ImmutablePair<>(name, version);
+    return new Pair<>(name, version);
   }
 
   /**

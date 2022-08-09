@@ -17,6 +17,7 @@ import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.scanner.fs.InputProject;
 
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.pip.RequirementsTxtDependencyScanner;
@@ -42,6 +43,9 @@ public class RequirementsTxtDependencyScannerTest {
     }
     FileSystem fileSystem = new DefaultFileSystem(folder.toPath()).add(pipRequirements);
     when(context.fileSystem()).thenReturn(fileSystem);
+    InputProject project = mock(InputProject.class);
+    when(project.key()).thenReturn("test-project");
+    when(context.project()).thenReturn(project);
     return context;
   }
 
@@ -63,12 +67,13 @@ public class RequirementsTxtDependencyScannerTest {
     Set<Dependency> dependencies = createScanner()
       .scan(createContext(RESOURCE_FOLDER, "requirements.txt"));
 
-    assertThat(dependencies, hasSize(3));
+    assertThat(dependencies, hasSize(4));
     
     assertThat(dependencies, containsInAnyOrder(
       new Dependency("docopt", "0.6.1","MIT"),
       new Dependency("psycopg2", "2.9.3","LGPL with exceptions"),
-      new Dependency("Flask", "2.2.1","BSD-3-Clause")));
+      new Dependency("Flask", "2.2.1","BSD-3-Clause"),
+      new Dependency("flask_cors", "3.0.10", "MIT")));
   }
 
   @Test
