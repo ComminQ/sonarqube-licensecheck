@@ -18,104 +18,57 @@ import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.scanner.fs.InputProject;
 
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
-public class PackageJsonDependencyScannerTest
-{
+public class PackageJsonDependencyScannerTest {
     private static final File RESOURCE_FOLDER = new File("src/test/resources");
 
-    private SensorContext createContext(File folder)
-    {
+    private SensorContext createContext(File folder) {
         SensorContext context = mock(SensorContext.class);
         InputFile packageJson = mock(InputFile.class);
         when(packageJson.language()).thenReturn("json");
         when(packageJson.filename()).thenReturn("package.json");
         when(packageJson.relativePath()).thenReturn("/package.json");
         when(packageJson.type()).thenReturn(InputFile.Type.MAIN);
-        try
-        {
+        try {
             when(packageJson.inputStream()).thenAnswer(i -> new FileInputStream(new File(folder, "package.json")));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         FileSystem fileSystem = new DefaultFileSystem(folder.toPath()).add(packageJson);
         when(context.fileSystem()).thenReturn(fileSystem);
+        InputProject project = mock(InputProject.class);
+        when(project.key()).thenReturn("test-project");
+        when(context.project()).thenReturn(project);
         return context;
     }
 
     @Test
-    public void testHappyPath()
-    {
-        Set<Dependency> dependencies = createScanner().scan(createContext(RESOURCE_FOLDER));
-
-        assertThat(dependencies, hasSize(2));
-        assertThat(dependencies, containsInAnyOrder(
-            new Dependency("angular", "1.5.0", "MIT"),
-            new Dependency("arangojs", "5.6.0", "Apache-2.0")));
-    }
-
-    @Test
-    public void testTransitive()
-    {
+    public void testGlobal() {
         Set<Dependency> dependencies = createScanner(true).scan(createContext(RESOURCE_FOLDER));
 
         assertThat(dependencies, hasSize(4));
         assertThat(dependencies, containsInAnyOrder(
-            new Dependency("angular", "1.5.0", "MIT"),
-            new Dependency("arangojs", "5.6.0", "Apache-2.0"),
-            new Dependency("linkedlist", "1.0.1", "LGPLv3"),
-            new Dependency("retry", "0.10.1", "MIT")));
+                new Dependency("angular", "^1.4.3", "MIT"),
+                new Dependency("angular-ui-router", "~0.2.18", "MIT"),
+                new Dependency("angular-ui-bootstrap", "1.1.2", "MIT"),
+                new Dependency("arangojs", "5.6.0", "Apache-2.0")));
     }
-
     @Test
-    public void testNoPackageJson()
-    {
+    public void testNoPackageJson() {
         Set<Dependency> dependencies = createScanner().scan(createContext(new File("src")));
 
         assertThat(dependencies, hasSize(0));
     }
 
-    @Test
-    public void testNoNodeModules()
-    {
-        Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "node_modules/arangojs")));
-
-        assertThat(dependencies, hasSize(0));
-    }
-
-    @Test
-    public void testLicenseInDeprecatedLicenseFormat()
-    {
-        final Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "deprecated_project")));
-
-        assertEquals(1, dependencies.size());
-
-        final Dependency expectedDependency = new Dependency("dynamic-dedupe", "0.3.0", "MIT");
-        assertEquals(expectedDependency, dependencies.toArray()[0]);
-    }
-
-    @Test
-    public void testLicenseInDeprecatedLicensesFormat()
-    {
-        final Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "deprecated_multilicense_project")));
-
-        assertEquals(1, dependencies.size());
-
-        final Dependency expectedDependency = new Dependency("some-module", "1.7.1", "(MIT OR LGPLv3)");
-        assertEquals(expectedDependency, dependencies.toArray()[0]);
-    }
-
-    private Scanner createScanner()
-    {
+    private Scanner createScanner() {
         return createScanner(false);
     }
 
-    private Scanner createScanner(boolean resolveTransitiveDeps)
-    {
+    private Scanner createScanner(boolean resolveTransitiveDeps) {
         LicenseMappingService licenseMappingService = mock(LicenseMappingService.class);
         when(licenseMappingService.mapLicense(anyString())).thenCallRealMethod();
         return new PackageJsonDependencyScanner(licenseMappingService, resolveTransitiveDeps);
