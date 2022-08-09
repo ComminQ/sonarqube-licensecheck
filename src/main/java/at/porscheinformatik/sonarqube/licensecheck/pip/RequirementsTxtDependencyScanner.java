@@ -63,10 +63,10 @@ public class RequirementsTxtDependencyScanner implements Scanner {
           }
           license = licenseMappingService.mapLicense(license);
           var deps = new Dependency(
-            packageData.getKey(), 
-            packageData.getValue(), 
-            license,
-            LicenseCheckRulesDefinition.LANG_PYTHON);
+              packageData.getKey(),
+              packageData.getValue(),
+              license,
+              LicenseCheckRulesDefinition.LANG_PYTHON);
           dependencies.add(deps);
         } catch (ArrayIndexOutOfBoundsException e) {
           // Might be invalid or invisible character
@@ -86,6 +86,8 @@ public class RequirementsTxtDependencyScanner implements Scanner {
     FilePredicate requirementsTxtPredicate = fs.predicates().matchesPathPattern("**/requirements.txt");
 
     Set<Dependency> allDependencies = new HashSet<>();
+    LOGGER.info("Starting PIP scan for {}",
+      context.project().key());
 
     for (InputFile requirementsTxtFile : fs.inputFiles(requirementsTxtPredicate)) {
       context.markForPublishing(requirementsTxtFile);
@@ -93,6 +95,8 @@ public class RequirementsTxtDependencyScanner implements Scanner {
       LOGGER.info("Scanning for PIP dependencies (dir={})", fs.baseDir());
       allDependencies.addAll(dependencyParser(fs.baseDir(), requirementsTxtFile));
     }
+
+    LOGGER.info("PIP scan finished for {}", context.project().key());
 
     return allDependencies;
   }
